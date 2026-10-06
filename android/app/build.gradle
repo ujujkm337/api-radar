@@ -1,0 +1,52 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace 'io.arena.apiradar'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId 'io.arena.apiradar'
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName '1.0'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    signingConfigs {
+        release {
+            storeFile file(System.getenv('AR_KEYSTORE') ?: '/home/user/.cache/apiradar.keystore')
+            storePassword 'apiradar'
+            keyAlias 'apiradar'
+            keyPassword 'apiradar'
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+        }
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+
+    packagingOptions {
+        exclude 'META-INF/*.kotlin_module'
+    }
+}
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.7.0'
+}

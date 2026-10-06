@@ -1,0 +1,22 @@
+# Android / Gradle
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.captures/
+android/.kotlin/
+
+# Подпись и бинарники — бинарники живут в релизах, не в git
+*.apk
+*.aab
+*.keystore
+*.jks
+
+# Системное
+.DS_Store
+Thumbs.db
+
+# Редакторы
+.vscode/
+.idea/
+*.iml

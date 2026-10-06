@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#0e1014">
+<meta name="description" content="API Radar — поиск, проверка и ранжирование публичных API">
+<title>API Radar</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="brand">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+          <circle cx="12" cy="12" r="2.2"/><path d="M12 12 L19 6"/><circle cx="12" cy="12" r="7.5" opacity=".45"/>
+        </svg>
+      </div>
+      <div>
+        <h1>API Radar</h1>
+        <p id="hdrSub">публичные API: поиск, проверка, рейтинг</p>
+      </div>
+    </div>
+    <button class="icb" id="wBtn" title="Веса рейтинга" aria-label="Веса рейтинга">
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+        <path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="8" cy="18" r="2" fill="currentColor" stroke="none"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ── Управление ─────────────────────────────── -->
+  <section class="card">
+    <button class="btn-main" id="scanBtn">
+      <svg class="ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/>
+      </svg>
+      <span id="scanLabel">Найти и проверить</span>
+    </button>
+
+    <div class="qrow">
+      <label class="qlbl" for="countChips">Сколько найти и проверить</label>
+      <div class="chips" id="countChips">
+        <button class="chip" data-n="25">25</button>
+        <button class="chip on" data-n="100">100</button>
+        <button class="chip" data-n="250">250</button>
+        <button class="chip" data-n="1000">1000</button>
+        <button class="chip" data-n="0">все</button>
+      </div>
+    </div>
+
+    <div class="prog"><div class="prog-bar" id="progBar"></div></div>
+    <div class="progtxt"><span id="progTxt">готов к работе</span><span id="progPct"></span></div>
+  </section>
+
+  <!-- ── Сводка ─────────────────────────────────── -->
+  <section class="stats" id="stats">
+    <div class="st"><b id="sTotal">0</b><span>найдено</span></div>
+    <div class="st"><b id="sDone">0</b><span>проверено</span></div>
+    <div class="st"><b id="sOk">0</b><span>живых</span></div>
+    <div class="st"><b id="sLat">—</b><span>ср. отклик</span></div>
+  </section>
+
+  <!-- ── Логи ───────────────────────────────────── -->
+  <section class="logwrap">
+    <button class="loghead" id="logHead" aria-expanded="true">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l4.5-5-3.5-4L8 4"/><path d="M12 20h8"/></svg>
+      <span>Логи</span>
+      <span class="logcnt" id="logCnt">0</span>
+      <svg class="chev" id="logChev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="logbox" id="logBox"><div class="log" id="log"></div></div>
+  </section>
+
+  <!-- ── Фильтры ────────────────────────────────── -->
+  <section class="filters">
+    <div class="frow">
+      <div class="search">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/></svg>
+        <input id="q" type="search" placeholder="название, провайдер, описание…" autocomplete="off">
+        <button class="clear" id="qClear" hidden aria-label="Очистить">×</button>
+      </div>
+      <select id="sort" aria-label="Сортировка">
+        <option value="score">по лучшести</option>
+        <option value="fresh">по свежести</option>
+        <option value="ops">по числу операций</option>
+        <option value="lat">по отклику</option>
+        <option value="name">по алфавиту</option>
+      </select>
+    </div>
+    <div class="chips scroll" id="catChips"></div>
+  </section>
+
+  <!-- ── Результаты ─────────────────────────────── -->
+  <section class="list" id="list"></section>
+  <div class="morewrap"><button class="btn-ghost" id="moreBtn" hidden>Показать ещё</button></div>
+  <div class="toolbar" id="toolbar" hidden>
+    <button class="btn-ghost" id="expBtn">Экспорт TSV</button>
+    <button class="btn-ghost" id="statBtn">Сводка</button>
+    <button class="btn-ghost" id="resetBtn">Сбросить</button>
+  </div>
+  <div class="empty" id="empty">Нажми «Найти и проверить» — приложение подтянет каталог из 2500+ публичных API, проверит каждый и построит рейтинг.</div>
+
+  <footer class="foot">
+    <span>Данные: APIs.guru. Проверка идёт только по открытым спецификациям — никаких чужих ключей.</span>
+  </footer>
+</main>
+
+<!-- ── Шторка: чат / площадка ───────────────────── -->
+<div class="backdrop" id="bdChat" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="Чат с API">
+    <div class="sheet-h">
+      <div>
+        <h2 id="chatTitle">API</h2>
+        <p id="chatSub"></p>
+      </div>
+      <button class="icb" id="chatClose" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="tabs" id="chatTabs">
+      <button class="tab on" data-t="play">Площадка</button>
+      <button class="tab" data-t="ai">AI-чат <em>свой ключ</em></button>
+    </div>
+    <div class="sheet-b" id="chatBody"></div>
+  </div>
+</div>
+
+<!-- ── Шторка: веса ─────────────────────────────── -->
+<div class="backdrop" id="bdW" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="Веса рейтинга">
+    <div class="sheet-h">
+      <div><h2>Что такое «лучше»</h2><p>Настрой вес каждого критерия под свою задачу</p></div>
+      <button class="icb" id="wClose" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="sheet-b" id="wBody"></div>
+    <div class="sheet-f">
+      <button class="btn-ghost" id="wReset">Сбросить</button>
+      <button class="btn-main sm" id="wApply">Применить</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="app.js"></script>
+<script src="chat.js"></script>
+</body>
+</html>
