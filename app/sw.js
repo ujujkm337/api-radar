@@ -1,5 +1,5 @@
 /* API Radar — service worker: кешируем оболочку, сеть оставляем прямой */
-const CACHE = 'apiradar-v1';
+const CACHE = 'apiradar-v2';
 const SHELL = [
   './', './index.html', './styles.css', './app.js', './chat.js',
   './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png'

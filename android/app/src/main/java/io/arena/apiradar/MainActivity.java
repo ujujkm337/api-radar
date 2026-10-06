@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -47,7 +48,17 @@ public class MainActivity extends Activity {
         s.setMediaPlaybackRequiresUserGesture(true);
         s.setLoadWithOverviewMode(false);
         s.setSupportZoom(false);
+        s.setBuiltInZoomControls(false);
+        s.setDisplayZoomControls(false);
+        s.setTextZoom(100);
         s.setUserAgentString(s.getUserAgentString() + " APIRadar/1.0");
+
+        // интерфейс не должен ездить по горизонтали и «пружинить» по краям
+        web.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        web.setHorizontalScrollBarEnabled(false);
+        web.setVerticalScrollBarEnabled(false);
+        web.setScrollbarFadingEnabled(true);
+        web.setScrollContainer(false);
 
         final WebViewAssetLoader loader = new WebViewAssetLoader.Builder()
                 .setDomain(DOMAIN)

@@ -12,6 +12,9 @@ android/.kotlin/
 *.keystore
 *.jks
 
+# Скриншоты из UI-тестов (генерируются заново)
+screens/
+
 # Системное
 .DS_Store
 Thumbs.db
